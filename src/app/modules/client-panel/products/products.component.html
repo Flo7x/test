@@ -1,0 +1,37 @@
+<div *ngIf="isLoading" class="h-screen flex justify-center items-center">
+  <mat-spinner ></mat-spinner>
+</div>
+
+<table
+  class="border-collapse table-auto w-full text-sm mt-4"
+  *ngIf="!isLoading">
+  <thead *ngIf="products$ != undefined">
+    <tr>
+      <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">ID</th>
+      <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">Title</th>
+      <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">Price</th>
+      <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">Description</th>
+      <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">Category</th>
+      <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">Image</th>
+      <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">Rating Rate</th>
+      <th class="border-b dark:border-slate-600 font-medium p-4 pl-8 pt-0 pb-3 text-slate-400 dark:text-slate-200 text-left">Rating Count</th>
+    </tr>
+  </thead>
+  <tbody class="bg-white dark:bg-slate-800">
+    <tr class="hover:bg-slate-100 cursor-pointer" *ngFor="let item of products$ | async" (click)="redirectTo(item.id!)">
+      <td class="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">{{ item.id }}</td>
+      <td class="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">{{ item.title}}</td>
+      <td class="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">{{ item.price }}</td>
+      <td class="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">{{ item.description!.length > 50 ? (item.description | slice: 0:50) + '...' : item.title}}</td>
+      <td class="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">{{ item.category }}</td>
+      <td class="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">
+        <img class = "max-h-12" src={{item.image}}>
+      </td>
+      <td class="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">{{ item.rating?.rate }}</td>
+      <td class="border-b border-slate-100 dark:border-slate-700 p-4 pl-8 text-slate-500 dark:text-slate-400">{{ item.rating?.count }}</td>
+
+    </tr>
+
+  </tbody>
+</table>
+
