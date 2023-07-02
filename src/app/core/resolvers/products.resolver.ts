@@ -12,10 +12,13 @@ export class ProductsResolver implements Resolve<Observable<Product[] | Product>
   resolve(
     route: ActivatedRouteSnapshot
   ): Observable <Product[] | Product> {
+
     const id = route.paramMap.get('id');
+
     if (id) {
       return this.prodServ.getOneProduct(id);
     }
+
     return this.prodServ.getProducts();
   }
 }

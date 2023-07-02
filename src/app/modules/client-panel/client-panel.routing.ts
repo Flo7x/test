@@ -14,7 +14,7 @@ const routes: Routes = [
   {
     path: ':id',
     resolve: {
-      products: ProductsResolver
+      product: ProductsResolver
     },
     component: OneProductComponent
   },

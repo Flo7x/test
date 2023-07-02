@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { BehaviorSubject, Subscription, finalize, map, switchMap } from 'rxjs';
+import { Observable, map, switchMap } from 'rxjs';
 import { Product } from 'src/app/core/interfaces/product';
 import { ProductsInfoService } from 'src/app/core/services/productsService.service';
 
@@ -11,51 +11,69 @@ import { ProductsInfoService } from 'src/app/core/services/productsService.servi
 })
 export class OneProductComponent implements OnInit {
 
-  currentProduct$ = new BehaviorSubject<Product | null>(null);
-  interestingProducts$ = new BehaviorSubject<Product[] | null>(null);
+  // products$: Observable<Product[]> | undefined = this.prodServ.getAllProducts();
 
-  productId!: Partial<string>;
-  interestingId: string[] | undefined;
+  currentProduct$: Observable<Product> | undefined = this.route.data.pipe(
+    map((data) => data['product']),
+  )
 
-  bufProducts: Product[] = [];
+  interestingProducts$: Observable<Product[]> | undefined;
 
-  constructor(
-    private prodServ: ProductsInfoService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
+  ngOnInit(): void {
 
-  ngOnInit() {
-
-    this.route.paramMap.subscribe(params => {
-      this.productId = params.get('id')!;
-    })
-
-    this.route.paramMap.pipe(
-      map(params => params.get('id')),
-      switchMap(() => {
-        return this.prodServ.products$;
-      }),
-      switchMap(products => {
-        this.foundRelatedId(products.length, Number(this.productId));
-        products.forEach(item => {
-          if ( item.id?.toString() === this.productId.toString()) this.currentProduct$.next(item);
-          this.interestingId?.forEach( interesting => {
-            if (interesting.toString() === item.id!.toString())
-              {
-                this.bufProducts.push(item);
-                this.interestingProducts$.next(this.bufProducts);
-              }
-
-          })
-        })
-        return this.prodServ.getProducts();
-      })
-    ).subscribe();
   }
 
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private prodServ: ProductsInfoService,
+  ){}
 
-  foundRelatedId(length: number, id: number) {
+  // currentProduct$ = new BehaviorSubject<Product | null>(null);
+  // interestingProducts$ = new BehaviorSubject<Product[] | null>(null);
+
+  // productId!: Partial<string>;
+  // interestingId: string[] | undefined;
+
+  // bufProducts: Product[] = [];
+
+  // constructor(
+  //   private prodServ: ProductsInfoService,
+  //   private route: ActivatedRoute,
+  //   private router: Router
+  // ) {}
+
+  // ngOnInit() {
+
+  //   this.route.paramMap.subscribe(params => {
+  //     this.productId = params.get('id')!;
+  //   })
+
+  //   this.route.paramMap.pipe(
+  //     map(params => params.get('id')),
+  //     switchMap(() => {
+  //       return this.prodServ.products$;
+  //     }),
+  //     switchMap(products => {
+  //       this.foundRelatedId(products.length, Number(this.productId));
+  //       products.forEach(item => {
+  //         if ( item.id?.toString() === this.productId.toString()) this.currentProduct$.next(item);
+  //         this.interestingId?.forEach( interesting => {
+  //           if (interesting.toString() === item.id!.toString())
+  //             {
+  //               this.bufProducts.push(item);
+  //               this.interestingProducts$.next(this.bufProducts);
+  //             }
+
+  //         })
+  //       })
+  //       return this.prodServ.getProducts();
+  //     })
+  //   ).subscribe();
+  // }
+
+
+  foundRelatedId(length: number, id: number): string[] {
     const arrayInteresting: string [] = [];
     if (id === 1) {
       arrayInteresting.push((id + 1).toString());
@@ -68,11 +86,10 @@ export class OneProductComponent implements OnInit {
       arrayInteresting.push((id + 1).toString());
     }
 
-    this.interestingId = arrayInteresting;
+    return arrayInteresting;
   }
 
   redirectTo(id: string) {
-    this.bufProducts = [];
     this.router.navigate([`/products/${id}`]);
   }
 

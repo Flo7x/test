@@ -13,35 +13,23 @@ export class ProductsComponent implements OnInit {
 
   products$: Observable<Product[]>  | undefined;
 
-  productSubcription: Subscription | undefined;
-
-
-  // products$: Observable<Product[]> | undefined;
-  isLoading: boolean = true;
+  isLoading: boolean = false;
 
   constructor(
-    private prodServ: ProductsInfoService,
     private router: Router,
     private route: ActivatedRoute
   ) { }
 
-  ngOnInit() {
-    this.getProducts();
 
-
-    // this.products$ = this.prodServ.products$;
-  }
+    ngOnInit(): void {
+      this.products$ = this.route.data.pipe(
+        finalize(() => this.isLoading = false),
+        map((data) => data['products'])
+      );
+    }
 
   redirectTo(id: string) {
     this.router.navigate([`/products/${id}`]);
-  }
-
-  getProducts() {
-    this.productSubcription = this.route.data.subscribe((data) => {
-      console.log(data);
-      this.products$ = data['products'];
-      this.isLoading = false;
-    });
   }
 
 }
