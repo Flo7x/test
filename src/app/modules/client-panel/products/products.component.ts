@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Route, Router } from '@angular/router';
-import { BehaviorSubject, Observable, finalize, map, tap } from 'rxjs';
+import { ActivatedRoute, ActivatedRouteSnapshot, Route, Router } from '@angular/router';
+import { BehaviorSubject, Observable, Subscription, finalize, map, tap } from 'rxjs';
 import { Product } from 'src/app/core/interfaces/product';
 import { ProductsInfoService } from 'src/app/core/services/productsService.service';
 
@@ -11,26 +11,37 @@ import { ProductsInfoService } from 'src/app/core/services/productsService.servi
 })
 export class ProductsComponent implements OnInit {
 
-  products$ = new BehaviorSubject<Product[] | null>(null);
+  products$: Observable<Product[]>  | undefined;
+
+  productSubcription: Subscription | undefined;
+
+
+  // products$: Observable<Product[]> | undefined;
   isLoading: boolean = true;
 
   constructor(
     private prodServ: ProductsInfoService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit() {
-    this.prodServ.products$
-      .pipe(
-        finalize(() => this.isLoading = false),
-        map((item) => {
-          this.products$.next(item);
-        })
-      )
-      .subscribe();
+    this.getProducts();
+
+
+    // this.products$ = this.prodServ.products$;
   }
 
   redirectTo(id: string) {
     this.router.navigate([`/products/${id}`]);
   }
+
+  getProducts() {
+    this.productSubcription = this.route.data.subscribe((data) => {
+      console.log(data);
+      this.products$ = data['products'];
+      this.isLoading = false;
+    });
+  }
+
 }

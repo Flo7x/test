@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Product } from '../interfaces/product';
-import { Observable, shareReplay } from 'rxjs';
+import { Observable, finalize, shareReplay } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,8 @@ export class ProductsInfoService {
     private http: HttpClient
   ) { }
 
-  products$ = this.http.get<Product[]>('https://fakestoreapi.com/products').pipe(shareReplay());
+  products$ = this.http.get<Product[]>('https://fakestoreapi.com/products').pipe(
+    shareReplay());
 
   setProducts() {
     return this.http.get<Product[]>('https://fakestoreapi.com/products');
@@ -20,6 +21,14 @@ export class ProductsInfoService {
 
   getProducts() {
     return this.products$;
+  }
+
+  getAllProducts(): Observable<Product[]> {
+    return this.http.get<Product[]>('https://fakestoreapi.com/products');
+  }
+
+  getOneProduct(idProduct: string): Observable<Product> {
+    return this.http.get<Product>(`https://fakestoreapi.com/products/${idProduct}`);
   }
 
 

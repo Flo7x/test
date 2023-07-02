@@ -51,10 +51,7 @@ export class OneProductComponent implements OnInit {
         })
         return this.prodServ.getProducts();
       })
-    ).subscribe(data => {
-      console.log(this.currentProduct$);
-      console.log(this.interestingProducts$);
-    });
+    ).subscribe();
   }
 
 
